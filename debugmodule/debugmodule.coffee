@@ -10,15 +10,16 @@ debugmodule.modulesToDebug =
     # adminmodule: true
     # adminpanelmodule: true
     # appstatemodule: true
-    # authmodule: true
-    bigpanelmodule: true
-    # bottompanelmodule: true
+    authmodule: true
+    # bigpanelmodule: true
+    bottompanelmodule: true
     # configmodule: true
     # contenthandlermodule: true
-    imagemanagementmodule: true
+    # imagemanagementmodule: true
     # linkmanagementmodule: true
     # listmanagementmodule: true
     # mustachekeysmodule: true
+    networkmodule: true
     # tabspanelmodule: true
     # templatepreparationmodule: true
     # uistatemodule: true
