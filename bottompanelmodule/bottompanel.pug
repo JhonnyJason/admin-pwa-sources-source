@@ -1,0 +1,20 @@
+//- bottompanel structure
+#admin-bottompanel
+    #admin-bottompanel-upper
+
+        #admin-login-section
+            +admin-svg-icon("login", "admin-login-button")
+            +admin-svg-icon("logout", "admin-logout-button")
+            input#admin-secret-input(type='password')
+            #admin-login-preloader
+
+        #admin-control-section
+            +admin-svg-icon("discard", "admin-discard-button")
+            +admin-svg-icon("make-visible", "admin-make-visible-button")
+            +admin-svg-icon("publish", "admin-publish-button")
+
+        #admin-menu-section
+            +admin-svg-icon("menu", "admin-bigpanel-visibility-button")
+    
+    #admin-bottompanel-lower
+        #admin-message-box

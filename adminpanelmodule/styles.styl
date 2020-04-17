@@ -1,0 +1,49 @@
+/*==========================================================
+Admin Panel Style
+==========================================================*/
+admin-panel-visibility-button-size = 30px
+
+/*========================================================*/
+#admin-panel
+    margin: 0
+    padding: 0
+    position: fixed
+    bottom: 0px
+    right 0px
+    width: 100%
+    z-index: 59999
+    transition: transform 0.3s ease-in-out
+
+#admin-panel.hidden
+    transform: translateX(102%);
+
+#admin-panel-visibility-button
+    background-color: white;
+    margin: 0
+    padding: 0
+    position: fixed
+    bottom: 20px
+    right: -5px
+    color #012
+    border-radius: 50% 0 0 50%;
+    border-left solid 2px #012
+    border-top solid 1px #012
+    border-bottom solid 1px #012
+    z-index: 60000
+    cursor: pointer
+    #admin-panel-show-icon
+        display none
+        width: admin-panel-visibility-button-size
+        height: admin-panel-visibility-button-size
+    #admin-panel-hide-icon
+        display block
+        width: admin-panel-visibility-button-size
+        height: admin-panel-visibility-button-size
+
+
+
+#admin-panel-visibility-button.hidden-panel
+    #admin-panel-show-icon
+        display block
+    #admin-panel-hide-icon
+        display none

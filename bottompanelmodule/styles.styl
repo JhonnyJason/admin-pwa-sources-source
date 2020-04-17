@@ -1,0 +1,125 @@
+bottompanel-height = 70px
+bottompanel-icon-size = 30px
+
+upper-line-padding-top = 2px
+upper-line-padding-left = 5px
+upper-line-padding-right = 40px
+
+login-icon-to-secret-input-gap = 10px
+logout-icon-to-discard-icon-gap = 0px
+discard-icon-to-make-visible-icon-gap = 0px
+make-visible-icon-to-publish-icon-gap = 0px
+publish-icon-to-bigpanel-icon-gap = 0px
+
+admin-control-section-max-width = 200px
+
+message-box-padding = 5px
+
+#admin-bottompanel
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    bottom: 0px;
+    // height: bottompanel-height;
+    width: 100%;
+    background-color: #012;
+
+    svg
+        height bottompanel-icon-size
+        width bottompanel-icon-size
+        color #fff2
+        cursor: pointer
+        display: inline-block
+
+    .hidden
+        display none
+
+    .active
+        color white
+
+
+#admin-bottompanel-upper
+    min-height: (bottompanel-height / 2)
+    padding-top: upper-line-padding-top
+    padding-left upper-line-padding-left
+    padding-right: upper-line-padding-right
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    justify-content: space-between
+
+#admin-bottompanel-lower
+    min-height: (bottompanel-height / 2)
+
+
+#admin-message-box
+    padding (2 * message-box-padding)
+    padding-bottom message-box-padding
+    font-weight: bold
+    color white
+    text-align center
+
+#admin-message-box.error
+    color red
+#admin-message-box.success
+    color #4BB943
+
+#admin-login-section
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+
+#admin-login-section
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+
+#admin-control-section
+    max-width admin-control-section-max-width
+    display: flex
+    flex-wrap: wrap
+    align-items center
+    justify-content: space-around
+    flex-grow: 1
+
+#admin-login-preloader
+    margin-left: 10px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    background: linear-gradient(rgb(255, 255, 255) -50%, rgba(255, 255, 255, 0) 50%);
+    animation: roll-r 1s linear infinite;
+
+#admin-secret-input
+    padding 0 5px
+    height bottompanel-icon-size
+    background-color white
+    color #012
+    outline: none
+    border: none
+
+
+#admin-login-button
+    margin-right login-icon-to-secret-input-gap
+
+#admin-discard-button
+    margin-left logout-icon-to-discard-icon-gap
+
+#admin-make-visible-button
+    margin-left discard-icon-to-make-visible-icon-gap
+
+#admin-publish-button
+    margin-left make-visible-icon-to-publish-icon-gap
+
+#admin-bigpanel-visibility-button
+    margin-left publish-icon-to-bigpanel-icon-gap
+
+
+@keyframes roll-r
+    0%
+        transform: rotate(0deg);
+    100%
+        transform: rotate(360deg);

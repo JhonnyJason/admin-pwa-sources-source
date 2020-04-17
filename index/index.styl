@@ -1,0 +1,89 @@
+/*==========================================================
+RESET
+==========================================================*/
+@import '../stylereset/reset.styl'
+
+/*==========================================================
+Including other components
+==========================================================*/
+@import '../allmodules/allstyles.styl'
+    
+/*==========================================================
+Style to move into their places
+==========================================================*/
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* showing editables */
+/*--------------------------------------------------------------------------------------------------------------------*/
+.editable-show
+  background-color: rgba(02, 255, 153, 0.3);
+
+.editable-editing,
+.editable-show.editable-editing
+  background-color: rgba(244, 75, 66, 0.3);
+
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* Image Editables */
+/*--------------------------------------------------------------------------------------------------------------------*/
+.card-img
+    position: relative;
+
+#contact-qr-code
+    position: relative;
+
+.img_edit
+    border-radius: 3px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    z-index: 10;
+    max-width: 250px;
+    text-align: right;
+
+.img_edit img
+    cursor: pointer;
+
+.img_edit p
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+    text-align: left;
+
+.img_edit input[type="file"]
+    width: 100%;
+    margin-bottom: 10px;
+
+.img_edit input[type="submit"]
+    display: block;
+    margin: 0 auto;
+    background: rgba(152, 255, 222, 1);
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    border: 1px solid #333;
+    text-align: center;
+    line-height: 26px;
+    border: none;
+    padding: 0 15px;
+    border-radius: 3px;
+
+.img_edit input[type="submit"]:hover
+    opacity: 0.9;
+    transition: 0.4s;
+
+.img_edit .upload
+    display: none;
+
+.img_edit.expanded
+    background: rgba(152, 255, 222, 0.52);
+
+
+.img_edit.expanded .upload
+    display: block;
+    transition: 0.4s;
+
+.img_edit.expanded img
+    margin-bottom: 5px;
+    transition: 0.4s;
