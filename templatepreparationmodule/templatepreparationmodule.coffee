@@ -64,6 +64,9 @@ prepareImage = (camelizedId, domBody) ->
     imageId = decamelize(camelizedId, "-")
     log imageId
     imageElement = domBody.querySelector("#"+imageId)
+    if !imageElement
+        log "Image with id: "+imageId+" did not exist!"
+        return
     imageElement.setAttribute("image-content-key", camelizedId)
     return
 

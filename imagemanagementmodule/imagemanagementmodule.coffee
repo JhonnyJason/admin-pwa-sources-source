@@ -156,7 +156,7 @@ getImagePreviewSectionHTML = (image) ->
         html += "<img class='admin-bigpanel-thumbnail-preview' "
         html += "src='/img/"+image.thumbnail.name+"' " 
         html += "height='"+image.thumbnail.height+"' "
-        html += "width='"+image.thumbnail.width"'>"
+        html += "width='"+image.thumbnail.width+"'>"
     html += "</div>"
     return html
 
