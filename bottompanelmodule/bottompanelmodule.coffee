@@ -60,6 +60,8 @@ bottompanelmodule.initialize = () ->
     adminMakeVisibleButton.addEventListener("click", showEditablesButtonClicked)    
     adminBigpanelVisibilityButton.addEventListener("click", toggleBigPanelVisibility)
 
+    document.addEventListener('keydown', documentKeyPressed)
+
     applyUIState()
     return
 
@@ -148,6 +150,19 @@ eraseMessageBox = ->
 
 ############################################################
 #region eventListeners
+documentKeyPressed = (event) ->
+    log "documentKeyPressed"
+    key = event.keyCode
+    if (key == 27) #escape
+        if uiState.bigPanelVisible()
+            uiState.bigPanelVisible false
+            uiState.bigPanelButtonState ""
+            uiState.save()
+            applyUIState()
+            bigpanel.applyUIState()            
+    return
+
+
 loginButtonClicked = ->
     log "loginButtonClicked"
     if adminSecretInput.value then doLogin()
