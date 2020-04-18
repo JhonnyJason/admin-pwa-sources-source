@@ -107,7 +107,20 @@ addAdministrativeEventListeners = ->
 #region eventListeners
 editableImageClicked = (event) ->
     log "editableImageClicked"
-    imageLabel = event.target.getAttribute("image-content-key")
+    element = event.target
+    imageLabel = element.getAttribute("image-content-key")
+    # log imageLabel
+    # log element
+    # log element.id
+    while !imageLabel and element
+        element = element.parentElement
+        imageLabel = element.getAttribute("image-content-key")
+        # log imageLabel
+        # log element
+        # log element.id
+
+    return unless imageLabel
+
     bigPanel.activateEdit("images", imageLabel)
     bottomPanel.applyUIState()
     return
@@ -116,7 +129,7 @@ editKeyPressed = (event) ->
     log "editKeyPressed"
     key = event.keyCode
     if (key == 27) #escape
-        this.textContent = currentEditTextFallback
+        this.innerHTML = currentEditTextFallback
         document.activeElement.blur()
     return
 
@@ -124,16 +137,16 @@ startedEditing = (event) ->
     log "startedEditing"
     element = event.target
     element.classList.add("editing")
-    currentEditTextFallback = element.textContent
+    currentEditTextFallback = element.innerHTML
     return
 
 stoppedEditing = (event) ->
     log "stoppedEditing"
     element = event.target
     element.classList.remove("editing")
-    return if element.textContent == currentEditTextFallback
+    return if element.innerHTML == currentEditTextFallback
     contentKeyString = element.getAttribute("text-content-key")
-    newContentText(contentKeyString, element.textContent)
+    newContentText(contentKeyString, element.innerHTML)
     return
 
 #endregion
@@ -164,7 +177,7 @@ revertEdit = (contentKeyString, oldText) ->
     bottomPanel.setErrorMessage("Veränderung konnte nicht angenommen werden!")
     selector = "[text-content-key='"+contentKeyString+"']"
     element = document.querySelector(selector)
-    element.textContent = oldText
+    element.innerHTML = oldText
     return
 
 setCleanState = ->
