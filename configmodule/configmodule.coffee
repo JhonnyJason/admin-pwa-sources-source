@@ -10,7 +10,7 @@ configmodule.initialize = () ->
     return    
 
 #region exposedProperties
-configmodule.sServerURL = 'https://localhost:6969'
+configmodule.sServerURL = 'https://admin-backend.eventerei.at'
 #endregion
 
 export default configmodule
