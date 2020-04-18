@@ -101,6 +101,7 @@ createImageEditElement = (label, image) ->
     log "createImageEditElement"
     div = document.createElement("div")
     innerHTML = getEditHeadHTML(image.name, label)
+    innerHTML += getImageDimensionHTML(image)
     innerHTML += getFileUploadSectionHTML()
     innerHTML += getImagePreviewSectionHTML(image)
 
@@ -131,6 +132,13 @@ createImageListElement = (label, image) ->
 
 ############################################################
 #region createElementHelpers
+getImageDimensionHTML = (image) ->
+    log "getImageDimensionHTML"
+    html = "<div class='admin-bigpanel-image-dimension'>"
+    html += image.width + " x " + image.height
+    html += "</div>"
+    return html
+
 getEditHeadHTML = (name) ->
     html = "<div class='admin-bigpanel-edit-head'>"
     html += getArrowLeftHTML()
