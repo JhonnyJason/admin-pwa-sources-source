@@ -74,8 +74,7 @@ uploadFile = (label, file) ->
     try
         response = await network.uploadImage(formData)
         bottomPanel.setSuccessMessage("Erfolgreich hochgeladen")
-        admin.noticeContentChange()
-        admin.start()
+        location.reload()
         log response
     catch err 
         log err
