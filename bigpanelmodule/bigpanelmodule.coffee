@@ -54,18 +54,6 @@ bigpanelmodule.initialize = () ->
 #region internalFunctions
 ############################################################
 #region eventListeners
-documentKeyPressed = (event) ->
-    log "documentKeyPressed"
-    key = event.keyCode
-    if (key == 27) #escape
-        if uiState.bigPanelVisible()
-            uiState.bigPanelVisible false
-            uiState.bigPanelButtonState ""
-            uiState.save()
-            bigpanelmodule.applyUIState()
-            
-    return
-
 adminImagesTabheadClicked = ->
     log "adminImagesTabheadClicked"
     uiState.activeTab("images")
