@@ -14,6 +14,7 @@ indexdomconnect.initialize = () ->
     global.adminImagesTabcontent = document.getElementById("admin-images-tabcontent")
     global.adminListsTabcontent = document.getElementById("admin-lists-tabcontent")
     global.adminLinksTabcontent = document.getElementById("admin-links-tabcontent")
+    global.adminFloatingpanel = document.getElementById("admin-floatingpanel")
     return
     
 module.exports = indexdomconnect

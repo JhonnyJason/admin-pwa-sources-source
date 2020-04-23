@@ -15,6 +15,7 @@ debugmodule.modulesToDebug =
     # bottompanelmodule: true
     # configmodule: true
     # contenthandlermodule: true
+    floatingpanelmodule: true
     # imagemanagementmodule: true
     # linkmanagementmodule: true
     # listmanagementmodule: true

@@ -21,6 +21,7 @@ adminpanel = null
 appState = null
 contentHandler = null
 bottomPanel = null
+floatingPanel = null
 bigPanel = null
 imageManagement = null
 listManagement = null
@@ -52,6 +53,7 @@ adminmodule.initialize = () ->
     auth = adminModules.authmodule
     contentHandler = adminModules.contenthandlermodule
     bigPanel = adminModules.bigpanelmodule
+    floatingPanel = adminModules.floatingpanelmodule
     imageManagement = adminModules.imagemanagementmodule
     listManagement = adminModules.listmanagementmodule
     linkManagement = adminModules.linkmanagementmodule
@@ -59,6 +61,7 @@ adminmodule.initialize = () ->
     return
 
 ############################################################
+#region internalFunctions
 renderProcess = ->
     log "renderProcess"
     content = contentHandler.content()
@@ -89,7 +92,6 @@ renderProcess = ->
     return
 
 ############################################################
-#region stuffForEditing
 addAdministrativeEventListeners = ->
     log "addAdministrativeEventListeners"
     allEditableTexts = document.querySelectorAll("[text-content-key]")
@@ -137,16 +139,18 @@ startedEditing = (event) ->
     log "startedEditing"
     element = event.target
     element.classList.add("editing")
+    activateFloatingPanelFor(element)
     currentContentFallback = cleanContentHTML(element.innerHTML)
     return
 
 stoppedEditing = (event) ->
     log "stoppedEditing"
+    floatingPanel.disappear()
     element = event.target
     element.classList.remove("editing")
     content = cleanContentHTML(element.innerHTML)
     element.innerHTML = content
-    log "new Content: " + content
+    # log "new Content: " + content
     return if content == currentContentFallback
     contentKeyString = element.getAttribute("text-content-key")
     newContentText(contentKeyString, content)
@@ -154,6 +158,8 @@ stoppedEditing = (event) ->
 
 #endregion
 
+############################################################
+#region contentCleaning
 getCleanBold = (el) ->
     log "getCleanBold"
     log el.innerHTML
@@ -190,7 +196,10 @@ cleanContentHTML = (innerHTML) ->
             el.replaceChild(newNode, child)
     return el.innerHTML
 
+#endregion
+
 ############################################################
+#region contentEditing
 newContentText = (contentKeyString, content) ->
     log "newContentText"
     log contentKeyString
@@ -232,6 +241,18 @@ setDirtyState = ->
     return
 
 ############################################################
+activateFloatingPanelFor = (element) ->
+    log "activateFloatingPanelFor"
+    floatingPanel.initializeForElement(element)
+    left = element.getBoundingClientRect().x
+    bottom = window.innerHeight - element.getBoundingClientRect().y
+    floatingPanel.appear(left, bottom)
+    return
+
+#endregion
+
+############################################################
+#region networkEvents
 updateSuccess = (response) ->
     log "updateSuccess"
     setDirtyState()
@@ -260,7 +281,12 @@ dataStateRequestError = ->
     auth.logout()
     return
 
+#endregion
+
+#endregion
+
 ############################################################
+#region exposedFunctions
 adminmodule.noticeContentChange = -> setDirtyState()
 
 adminmodule.noticeAuthorizationSuccess = ->
@@ -314,5 +340,7 @@ adminmodule.start = ->
     prepareImages()
     renderProcess()
     return
+
+#endregion
 
 module.exports = adminmodule

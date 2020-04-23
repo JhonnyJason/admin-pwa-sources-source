@@ -7,6 +7,7 @@ import bottompanelmodule from "./bottompanelmodule"
 import configmodule from "./configmodule"
 import contenthandlermodule from "./contenthandlermodule"
 import debugmodule from "./debugmodule"
+import floatingpanelmodule from "./floatingpanelmodule"
 import imagemanagementmodule from "./imagemanagementmodule"
 import linkmanagementmodule from "./linkmanagementmodule"
 import listmanagementmodule from "./listmanagementmodule"
@@ -26,6 +27,7 @@ Modules = {
     configmodule,
     contenthandlermodule,
     debugmodule,
+    floatingpanelmodule,
     imagemanagementmodule,
     linkmanagementmodule,
     listmanagementmodule,

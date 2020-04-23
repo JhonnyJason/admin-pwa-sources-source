@@ -57,6 +57,7 @@ applyPanelState = ->
 ############################################################
 adminpanelmodule.attachPanelToBody = (body) ->
     log "adminpanelmodule.attachPanelToBody"
+    body.appendChild adminFloatingpanel
     body.appendChild adminPanel 
     body.appendChild adminPanelVisibilityButton 
     return
