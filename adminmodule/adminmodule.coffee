@@ -170,7 +170,7 @@ getCleanBold = (el) ->
 getCleanAnchor = (el) ->
     log "getCleanAnchor"
     log el.innerHTML
-    newEl.innerHTML = cleanContentHMLT(el.innerHTML)
+    el.innerHTML = cleanContentHMLT(el.innerHTML)
     href = el.getAttribute("href")
     if href then newEl.setAttribute("href", href)
     return newEl

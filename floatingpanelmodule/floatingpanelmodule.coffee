@@ -13,6 +13,7 @@ print = (arg) -> console.log(arg)
 ############################################################
 disappearTimemoutId = 0
 timeoutMS = 200
+unsused = true
 
 ############################################################
 floatingpanelmodule.initialize = () ->
@@ -28,18 +29,20 @@ disappear = ->
 ############################################################
 floatingpanelmodule.initializeForElement = (element) ->
     log "floatingpanelmodule.initializeForElement"
+    unused = false
     if element.tagName == "A"
         href = element.getAttribute("href")
         realLink = "<a href='"+href+"'>activate Link</a>"
         adminFloatingpanel.innerHTML = realLink
     else
-        adminFloatingpanel.style.width = element.getBoundingClientRect().width+"px"   
+        unused = true
     return
 
 floatingpanelmodule.appear = (left, bottom) ->
     log "floatingpanelmodule.appear"
     if disappearTimemoutId then clearTimeout(disappearTimemoutId)
     disappearTimemoutId = 0
+    return if unsused
     adminFloatingpanel.classList.add("active")
     adminFloatingpanel.style.left = left+"px"
     adminFloatingpanel.style.bottom = bottom+"px"
