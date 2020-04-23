@@ -7,11 +7,11 @@ debugmodule.initialize = () ->
 
 debugmodule.modulesToDebug = 
     unbreaker: true
-    # adminmodule: true
+    adminmodule: true
     # adminpanelmodule: true
     # appstatemodule: true
     # authmodule: true
-    bigpanelmodule: true
+    # bigpanelmodule: true
     # bottompanelmodule: true
     # configmodule: true
     # contenthandlermodule: true

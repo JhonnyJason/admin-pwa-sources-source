@@ -30,7 +30,7 @@ auth = null
 
 ############################################################
 #region internalProperties
-currentEditTextFallback = ""
+currentContentFallback = ""
 
 ############################################################
 typingSecret = false
@@ -129,7 +129,7 @@ editKeyPressed = (event) ->
     log "editKeyPressed"
     key = event.keyCode
     if (key == 27) #escape
-        this.innerHTML = currentEditTextFallback
+        this.innerHTML = currentContentFallback
         document.activeElement.blur()
     return
 
@@ -137,19 +137,57 @@ startedEditing = (event) ->
     log "startedEditing"
     element = event.target
     element.classList.add("editing")
-    currentEditTextFallback = element.innerHTML
+    currentContentFallback = cleanContentHTML(element.innerHTML)
     return
 
 stoppedEditing = (event) ->
     log "stoppedEditing"
     element = event.target
     element.classList.remove("editing")
-    return if element.innerHTML == currentEditTextFallback
+    content = cleanContentHTML(element.innerHTML)
+    log "new Content: " + content
+    return if content == currentContentFallback
     contentKeyString = element.getAttribute("text-content-key")
-    newContentText(contentKeyString, element.innerHTML)
+    newContentText(contentKeyString, content)
     return
 
 #endregion
+
+getCleanBold = (el) ->
+    log "getCleanBold"
+    log el.innerHTML
+    newEl = document.createElement("b")
+    newEl.innerHTML = cleanContentHTML(el.innerHTML)
+    return newEl
+
+getCleanAnchor = (el) ->
+    log "getCleanAnchor"
+    log el.innerHTML
+    newEl.innerHTML = cleanContentHMLT(el.innerHTML)
+    href = el.getAttribute("href")
+    if href then newEl.setAttribute("href", href)
+    return newEl
+
+cleanContentHTML = (innerHTML) ->
+    log "cleanContentHTML"
+    log innerHTML
+    el = document.createElement("div")
+    el.innerHTML = innerHTML
+    children = [el.children...]
+    for child in children
+        if child.tagName == "B" then newNode = getCleanBold(child)
+        else if child.tagName == "A" then newNode = getCleanAnchor(child)
+        else if child.tagName == "BR" then newNode = document.createElement("br")
+        else newNode = cleanContentHTML(child.innerHTML)
+        log child.innerHTML
+        log child.tagName
+        if typeof newNode == "string"
+            if newNode != "<br>" then newNode = "<br>"+newNode
+            child.insertAdjacentHTML("beforebegin", newNode)
+            el.removeChild(child)
+        else
+            el.replaceChild(newNode, child)
+    return el.innerHTML
 
 ############################################################
 newContentText = (contentKeyString, content) ->
@@ -161,7 +199,7 @@ newContentText = (contentKeyString, content) ->
     path = window.location.pathname
     documentName = path.split("/").pop()
     updateObject = {langTag, documentName, contentKeyString, content, token}
-    oldContent = currentEditTextFallback
+    oldContent = currentContentFallback
     try
         response = await network.scicall("update", updateObject)
         edits = {}
