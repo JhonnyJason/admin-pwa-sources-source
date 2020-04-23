@@ -40,6 +40,7 @@ token =  ""
 panelVisible =  true
 showingEditables = false
 
+altIsPressed = 0
 #endregion
 
 ############################################################
@@ -96,6 +97,7 @@ addAdministrativeEventListeners = ->
     log "addAdministrativeEventListeners"
     allEditableTexts = document.querySelectorAll("[text-content-key]")
     for editable in allEditableTexts
+        editable.addEventListener("keyup", editKeyReleased)
         editable.addEventListener("keydown", editKeyPressed)
         editable.addEventListener("focusin", startedEditing)
         editable.addEventListener("focusout", stoppedEditing)
@@ -113,6 +115,10 @@ defuseLink = (element) ->
     log "defuseLink"
     # while element?
     #     if element.tagName == "A" then setAttribute("href", "#")        element = element.parentElement
+    return
+
+createLink = ->
+    log "createLink"
     return
 
 ############################################################
@@ -144,9 +150,17 @@ editableImageClicked = (event) ->
     bottomPanel.applyUIState()
     return
 
+editKeyReleased = (event) ->
+    log "editKeyReleased"
+    key = event.keyCode
+    if (key == 18 ) then altIsPressed = false
+    return
+
 editKeyPressed = (event) ->
     log "editKeyPressed"
     key = event.keyCode
+    if (key == 76 and altIsPressed and event.ctrlKey) then createLink()
+    if (key == 18) then altIsPressed = true
     if (key == 27) #escape
         this.innerHTML = currentContentFallback
         document.activeElement.blur()
