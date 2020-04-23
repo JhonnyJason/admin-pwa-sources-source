@@ -99,16 +99,33 @@ addAdministrativeEventListeners = ->
         editable.addEventListener("keydown", editKeyPressed)
         editable.addEventListener("focusin", startedEditing)
         editable.addEventListener("focusout", stoppedEditing)
-    
+        editable.addEventListener("click", editableClicked)
+        defuseLink(editable)
+
     allEditableImages = document.querySelectorAll("[image-content-key]")
     for editable in allEditableImages
         editable.addEventListener("click", editableImageClicked)
+        defuseLink(editable)
+
+    return
+
+defuseLink = (element) ->
+    log "defuseLink"
+    # while element?
+    #     if element.tagName == "A" then setAttribute("href", "#")        element = element.parentElement
     return
 
 ############################################################
 #region eventListeners
+editableClicked = (event) ->
+    log "editableClicked"
+    event.preventDefault()
+    event.stopPropagation()
+    return false
+
 editableImageClicked = (event) ->
     log "editableImageClicked"
+    event.preventDefault()
     element = event.target
     imageLabel = element.getAttribute("image-content-key")
     # log imageLabel
