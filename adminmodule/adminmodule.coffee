@@ -145,6 +145,7 @@ stoppedEditing = (event) ->
     element = event.target
     element.classList.remove("editing")
     content = cleanContentHTML(element.innerHTML)
+    element.innerHTML = content
     log "new Content: " + content
     return if content == currentContentFallback
     contentKeyString = element.getAttribute("text-content-key")
