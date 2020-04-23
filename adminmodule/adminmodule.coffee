@@ -180,17 +180,16 @@ stoppedEditing = (event) ->
 getCleanBold = (el) ->
     log "getCleanBold"
     log el.innerHTML
-    newEl = document.createElement("b")
-    newEl.innerHTML = cleanContentHTML(el.innerHTML)
-    return newEl
+    el.innerHTML = cleanContentHTML(el.innerHTML)
+    return el
 
 getCleanAnchor = (el) ->
     log "getCleanAnchor"
     log el.innerHTML
     el.innerHTML = cleanContentHTML(el.innerHTML)
-    href = el.getAttribute("href")
-    if href then newEl.setAttribute("href", href)
-    return newEl
+    # href = el.getAttribute("href")
+    # if href then el.setAttribute("href", href)
+    return el
 
 cleanContentHTML = (innerHTML) ->
     log "cleanContentHTML"
