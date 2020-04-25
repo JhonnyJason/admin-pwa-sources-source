@@ -119,6 +119,13 @@ defuseLink = (element) ->
 
 createLink = ->
     log "createLink"
+    selection = window.getSelection()
+    rangeCount = selection.rangeCount
+    if rangeCount > 1 or rangeCount < 1 then return
+    link = document.createElement("a")
+    link.setAttribute("href", "#")
+    range = selection.getRangeAt(0)
+    range.surroundContents(link)
     return
 
 ############################################################
@@ -170,8 +177,8 @@ startedEditing = (event) ->
     log "startedEditing"
     element = event.target
     element.classList.add("editing")
-    activateFloatingPanelFor(element)
     currentContentFallback = cleanContentHTML(element.innerHTML)
+    activateFloatingPanelFor(element)
     return
 
 stoppedEditing = (event) ->
@@ -192,22 +199,22 @@ stoppedEditing = (event) ->
 ############################################################
 #region contentCleaning
 getCleanBold = (el) ->
-    log "getCleanBold"
-    log el.innerHTML
+    # log "getCleanBold"
+    # log el.innerHTML
     el.innerHTML = cleanContentHTML(el.innerHTML)
     return el
 
 getCleanAnchor = (el) ->
-    log "getCleanAnchor"
-    log el.innerHTML
+    # log "getCleanAnchor"
+    # log el.innerHTML
     el.innerHTML = cleanContentHTML(el.innerHTML)
     # href = el.getAttribute("href")
     # if href then el.setAttribute("href", href)
     return el
 
 cleanContentHTML = (innerHTML) ->
-    log "cleanContentHTML"
-    log innerHTML
+    # log "cleanContentHTML"
+    # log innerHTML
     el = document.createElement("div")
     el.innerHTML = innerHTML
     children = [el.children...]
@@ -216,8 +223,8 @@ cleanContentHTML = (innerHTML) ->
         else if child.tagName == "A" then newNode = getCleanAnchor(child)
         else if child.tagName == "BR" then newNode = document.createElement("br")
         else newNode = cleanContentHTML(child.innerHTML)
-        log child.innerHTML
-        log child.tagName
+        # log child.innerHTML
+        # log child.tagName
         if typeof newNode == "string"
             if newNode != "<br>" then newNode = "<br>"+newNode
             child.insertAdjacentHTML("beforebegin", newNode)
@@ -273,7 +280,7 @@ setDirtyState = ->
 ############################################################
 activateFloatingPanelFor = (element) ->
     log "activateFloatingPanelFor"
-    floatingPanel.initializeForElement(element)
+    floatingPanel.initializeForElement(element, currentContentFallback)
     left = element.getBoundingClientRect().x
     bottom = window.innerHeight - element.getBoundingClientRect().y
     floatingPanel.appear(left, bottom)
@@ -317,6 +324,17 @@ dataStateRequestError = ->
 
 ############################################################
 #region exposedFunctions
+adminmodule.noticeElementEdit = (element, fallback) ->
+    log "adminmodule.noticeElementEdit"
+    content = cleanContentHTML(element.innerHTML)
+    log ""+element
+    element.innerHTML = content
+    contentKeyString = element.getAttribute("text-content-key")
+    currentContentFallback = fallback
+    log "fallback: " + fallback
+    newContentText(contentKeyString, content)
+    return
+
 adminmodule.noticeContentChange = -> setDirtyState()
 
 adminmodule.noticeAuthorizationSuccess = ->
