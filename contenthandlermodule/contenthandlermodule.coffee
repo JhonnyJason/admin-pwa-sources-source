@@ -20,16 +20,14 @@ network = null
 #endregion
 
 ############################################################
-currentOriginal = null
-currentContent = null
+currentOriginal = pwaContent
+currentContent = JSON.parse(JSON.stringify(currentOriginal))
 
 ############################################################
 contenthandlermodule.initialize = () ->
     log "contenthandlermodule.initialize"
     appState = adminModules.appstatemodule
     network = adminModules.networkmodule
-    currentOriginal = pwaContent
-    contenthandlermodule.reflectEdits({})
     return
     
 ############################################################

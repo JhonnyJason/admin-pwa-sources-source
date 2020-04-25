@@ -88,8 +88,8 @@ renderProcess = ->
     ##fire document onload again
     window.dispatchEvent(new Event("load"))
 
-    addAdministrativeEventListeners()
     bigPanel.prepare()
+    addAdministrativeEventListeners()
     return
 
 ############################################################

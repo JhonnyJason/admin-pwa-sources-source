@@ -12,6 +12,7 @@ print = (arg) -> console.log(arg)
 ############################################################
 uiState = null
 imageManagement = null
+contentHandler = null
 
 ############################################################
 #region internalProperties
@@ -34,6 +35,7 @@ bigpanelmodule.initialize = () ->
     log "bigpanelmodule.initialize"
     uiState = adminModules.uistatemodule
     imageManagement = adminModules.imagemanagementmodule
+    contentHandler = adminModules.contenthandlermodule
 
     imagesListElementContainer = adminImagesTabcontent.querySelector(".list-element-container")
     imagesEditElementContainer = adminImagesTabcontent.querySelector(".edit-element-container")
@@ -42,10 +44,12 @@ bigpanelmodule.initialize = () ->
     linksListElementContainer = adminLinksTabcontent.querySelector(".list-element-container")
     linksEditElementContainer = adminLinksTabcontent.querySelector(".edit-element-container")
 
+    adminMetaTabhead.addEventListener("click", adminMetaTabheadClicked)
     adminImagesTabhead.addEventListener("click", adminImagesTabheadClicked)
     adminListsTabhead.addEventListener("click", adminListsTabheadClicked)
     adminLinksTabhead.addEventListener("click", adminLinksTabheadClicked)
 
+    setMetaTabcontent()
     imageManagement.setImages(pwaContent.images)
     bigpanelmodule.applyUIState()
     return
@@ -54,6 +58,13 @@ bigpanelmodule.initialize = () ->
 #region internalFunctions
 ############################################################
 #region eventListeners
+adminMetaTabheadClicked = ->
+    log "adminMetaTabheadClicked"
+    uiState.activeTab("meta")
+    uiState.save()
+    bigpanelmodule.applyUIState()
+    return
+
 adminImagesTabheadClicked = ->
     log "adminImagesTabheadClicked"
     uiState.activeTab("images")
@@ -94,6 +105,7 @@ imageElementBackClicked = (event) ->
 #region injectElementsToDOM
 setAllElementsToDOM = ->
     log "setAllElementsToDOM"
+    setMetaTabcontent()
     setImagesTabcontent()
     setListsTabcontent()
     setLinksTabcontent()
@@ -101,9 +113,21 @@ setAllElementsToDOM = ->
     return
 
 ############################################################
+setMetaTabcontent = ->
+    log "setMetaTabcontent"
+    adminMetaTabcontent.innerHTML = ""
+    
+    contents = contentHandler.content()
+
+    html = ""
+    for label,content of contents
+        html += createMetaEditHTML(label,content)
+
+    adminMetaTabcontent.innerHTML = html    
+    return
+
 setImagesTabcontent = ->
-    log "setImagesTabcon
-    tent"
+    log "setImagesTabcontent"
 
     imagesListElementContainer.innerHTML = ""
     imagesEditElementContainer.innerHTML = ""
@@ -144,6 +168,20 @@ setLinksTabcontent = ->
 
     return
 
+############################################################
+createMetaEditHTML = (label, content) ->
+    log "createMetaEditHTML"
+    return "" unless typeof content == "string"
+    html = "<div class='meta-edit-element'>"
+    html += "<div class='meta-edit-label'>"
+    html += label
+    html += ":</div>"
+    html += "<div text-content-key='"+label+"' contentEditable>"
+    html += content
+    html += "</div>"
+    html += "</div>"
+    return html
+
 #endregion
 
 ############################################################
@@ -168,7 +206,20 @@ bigpanelmodule.applyUIState = ->
         adminBigpanel.classList.add("hidden")
 
     activeTab = uiState.activeTab()
+
+    if activeTab == "meta"
+        adminMetaTabcontent.classList.add("active")
+        adminMetaTabhead.classList.add("active")
+        adminImagesTabcontent.classList.remove("active")
+        adminImagesTabhead.classList.remove("active")
+        adminListsTabcontent.classList.remove("active")
+        adminListsTabhead.classList.remove("active")
+        adminLinksTabcontent.classList.remove("active")
+        adminLinksTabhead.classList.remove("active")
+
     if activeTab == "images"
+        adminMetaTabhead.classList.remove("active")
+        adminMetaTabcontent.classList.remove("active")
         adminImagesTabcontent.classList.add("active")
         adminImagesTabhead.classList.add("active")
         adminListsTabcontent.classList.remove("active")
@@ -193,13 +244,18 @@ bigpanelmodule.applyUIState = ->
             editElement.classList.add("active")
  
     if activeTab == "lists"
+        adminMetaTabhead.classList.remove("active")
+        adminMetaTabcontent.classList.remove("active")
         adminImagesTabcontent.classList.remove("active")
         adminImagesTabhead.classList.remove("active")
         adminListsTabcontent.classList.add("active")
         adminListsTabhead.classList.add("active")
         adminLinksTabcontent.classList.remove("active")
         adminLinksTabhead.classList.remove("active")
+
     if activeTab == "links"
+        adminMetaTabhead.classList.remove("active")
+        adminMetaTabcontent.classList.remove("active")
         adminImagesTabcontent.classList.remove("active")
         adminImagesTabhead.classList.remove("active")
         adminListsTabcontent.classList.remove("active")
