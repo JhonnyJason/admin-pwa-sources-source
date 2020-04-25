@@ -12,6 +12,8 @@ print = (arg) -> console.log(arg)
 ############################################################
 uiState = null
 imageManagement = null
+linkManagement = null
+listManagement = null
 contentHandler = null
 
 ############################################################
@@ -35,6 +37,8 @@ bigpanelmodule.initialize = () ->
     log "bigpanelmodule.initialize"
     uiState = adminModules.uistatemodule
     imageManagement = adminModules.imagemanagementmodule
+    linkManagement = adminModules.linkmanagementmodule
+    listManagement = adminModules.listmanagementmodule
     contentHandler = adminModules.contenthandlermodule
 
     imagesListElementContainer = adminImagesTabcontent.querySelector(".list-element-container")
@@ -157,14 +161,9 @@ setListsTabcontent = ->
 setLinksTabcontent = ->
     log "setLinksTabcontent"
 
-    # linksListElementContainer.innerHTML = ""
-    # linksEditElementContainer.innerHTML = ""
-
-    # for label in availableLists
-    #     listElement = linkManagement.getListElement label
-    #     linksListElementContainer.appendChild listElement
-    #     editElement = linkManagement.getEditElement label
-    #     linksEditElementContainer.appendChild editElement
+    adminLinksTabcontent.innerHTML = ""
+    contentElement = linkManagement.getContentElement()
+    adminLinksTabcontent.appendChild(contentElement)
 
     return
 
@@ -291,9 +290,6 @@ bigpanelmodule.activateEdit = (type, label) ->
     if type ==  "images"
         uiState.activeTab "images"
         uiState.activeImageEdit label
-    if type  == "links"
-        uiState.activeTab "links"
-        uiState.activeLinkEdit label
     if type == "lists"
         uiState.activeTab "lists"
         uiState.activeListEdit label
