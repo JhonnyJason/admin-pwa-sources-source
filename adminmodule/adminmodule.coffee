@@ -19,6 +19,7 @@ templatepreparation = null
 network = null
 adminpanel = null
 appState = null
+uiState = null
 contentHandler = null
 bottomPanel = null
 floatingPanel = null
@@ -51,6 +52,7 @@ adminmodule.initialize = () ->
     network = adminModules.networkmodule
     adminpanel = adminModules.adminpanelmodule
     appState = adminModules.appstatemodule
+    uiState = adminModules.uistatemodule
     auth = adminModules.authmodule
     contentHandler = adminModules.contenthandlermodule
     bigPanel = adminModules.bigpanelmodule
@@ -90,6 +92,7 @@ renderProcess = ->
 
     bigPanel.prepare()
     addAdministrativeEventListeners()
+    applyEditableVisibility()
     return
 
 ############################################################
@@ -237,6 +240,25 @@ cleanContentHTML = (innerHTML) ->
 
 ############################################################
 #region contentEditing
+applyEditableVisibility = ->
+    log "applyEditableVisibility"
+    if uiState.visibleEditables()
+        allEditableTexts = document.querySelectorAll("[text-content-key]")
+        for editableText in allEditableTexts
+            editableText.classList.add("editable-show")
+        allEditableImages = document.querySelectorAll("[image-content-key]")
+        for editableImage in allEditableImages
+            editableImage.classList.add("editable-image")
+    else
+        allEditableTexts = document.querySelectorAll("[text-content-key]")
+        for editableText in allEditableTexts
+            editableText.classList.remove("editable-show")
+        allEditableImages = document.querySelectorAll("[image-content-key]")
+        for editableImage in allEditableImages
+            editableImage.classList.remove("editable-image")
+    return
+
+############################################################
 newContentText = (contentKeyString, content) ->
     log "newContentText"
     log contentKeyString
@@ -324,6 +346,19 @@ dataStateRequestError = ->
 
 ############################################################
 #region exposedFunctions
+adminmodule.start = ->
+    log "adminmodule.start"
+    prepareImages()
+    renderProcess()
+    return
+
+############################################################
+#region noticeStuff
+adminmodule.noticeVisibilityChanged = ->
+    log "adminmodule.noticeVisibilityChanged"
+    applyEditableVisibility()
+    return
+
 adminmodule.noticeElementEdit = (element, fallback) ->
     log "adminmodule.noticeElementEdit"
     content = cleanContentHTML(element.innerHTML)
@@ -354,6 +389,9 @@ adminmodule.noticeAuthorizationFail = ->
     log "adminmodule.noticeAuthorizationFail"
     return
 
+#endregion
+
+############################################################
 adminmodule.discard = ->
     log "adminmodule.discard"
     try
@@ -381,12 +419,6 @@ adminmodule.apply = ->
         bottomPanel.setSuccessMessage("Alle Änderungen wurden übernommen")
     catch err
         bottomPanel.setErrorMessage("Keine Änderungen wurden übernommen!")
-    return
-
-adminmodule.start = ->
-    log "adminmodule.start"
-    prepareImages()
-    renderProcess()
     return
 
 #endregion

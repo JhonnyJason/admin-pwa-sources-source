@@ -93,22 +93,6 @@ applyUIState = ->
     adminMakeVisibleButton.setAttribute "class",uiState.makeVisibleButtonState()
     adminPublishButton.setAttribute "class",uiState.publishButtonState()
     adminBigpanelVisibilityButton.setAttribute "class",uiState.bigPanelButtonState()
-
-    if uiState.visibleEditables()
-        allEditableTexts = document.querySelectorAll("[text-content-key]")
-        for editableText in allEditableTexts
-            editableText.classList.add("editable-show")
-        allEditableImages = document.querySelectorAll("[image-content-key]")
-        for editableImage in allEditableImages
-            editableImage.classList.add("editable-image")
-    else
-        allEditableTexts = document.querySelectorAll("[text-content-key]")
-        for editableText in allEditableTexts
-            editableText.classList.remove("editable-show")
-
-        allEditableImages = document.querySelectorAll("[image-content-key]")
-        for editableImage in allEditableImages
-            editableImage.classList.remove("editable-image")
     
     return
 
@@ -196,7 +180,8 @@ showEditablesButtonClicked = ->
     else 
         uiState.visibleEditables true
         uiState.makeVisibleButtonState "active"
-    uiState.save()    
+    uiState.save()
+    admin.noticeVisibilityChanged()
     applyUIState()
     return
 
@@ -223,6 +208,7 @@ toggleBigPanelVisibility = ->
 
 #endregion
 
+############################################################
 doLogin = ->
     log "doLogin"
     spinnerActive = true
