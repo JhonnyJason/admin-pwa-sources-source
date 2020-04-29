@@ -9,9 +9,12 @@ olog = (obj) -> log "\n" + ostr(obj)
 print = (arg) -> console.log(arg)
 #endregion
 
+contentHandler = null
+
 ############################################################
 mustachekeysmodule.initialize = () ->
     log "mustachekeysmodule.initialize"
+    contentHandler = adminModules.contenthandlermodule
     return
 
 ############################################################
@@ -33,13 +36,15 @@ handleNextLevel = (prefix, mustacheObject, thisContent) ->
 ############################################################
 mustachekeysmodule.createMustacheKeys = ->
     log "mustachekeysmodule.createMustacheKeys"
-    topLevelKeys = Object.keys(pwaContent)
+    
+    content = contentHandler.content()
+    topLevelKeys = Object.keys(content)
     
     mustacheKeys = {}
     for key in topLevelKeys
-        if typeof pwaContent[key] != "string"
-            mustacheKeys[key] = createNextLevelObject(pwaContent[key])
-            handleNextLevel(key, mustacheKeys[key], pwaContent[key]) 
+        if typeof content[key] != "string"
+            mustacheKeys[key] = createNextLevelObject(content[key])
+            handleNextLevel(key, mustacheKeys[key], content[key]) 
         else mustacheKeys[key] = "{{{"+key+"}}}"
 
     global.pwaMustacheKeymap = mustacheKeys

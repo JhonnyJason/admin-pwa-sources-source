@@ -17,7 +17,6 @@ defaultUIState =
     activeTab: "lists" # "images" || "links"
     activeImageEdit: ""
     activeListEdit: ""
-    activeLinkEdit: ""
     loginButtonVisible: true
     discardButtonState: "hidden" # "active" || ""
     makeVisibleButtonState: "hidden" # "active" || ""

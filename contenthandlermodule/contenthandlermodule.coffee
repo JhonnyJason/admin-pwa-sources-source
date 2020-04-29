@@ -58,6 +58,7 @@ reflectEdit = (key, content) ->
     index = 0
     while index < (tokens.length - 1)
         contentObject = contentObject[tokens[index]]
+        if !contentObject then return
         index++
     contentObject[tokens[index]] = content
     return

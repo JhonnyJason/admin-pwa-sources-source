@@ -55,13 +55,18 @@ bigpanelmodule.initialize = () ->
 
     setMetaTabcontent()
     imageManagement.setImages(pwaContent.images)
+    listManagement.prepareListElements(pwaContent)
     bigpanelmodule.applyUIState()
     return
 
 #############################################################
 #region internalFunctions
+
 ############################################################
 #region eventListeners
+
+############################################################
+#region tabs
 adminMetaTabheadClicked = ->
     log "adminMetaTabheadClicked"
     uiState.activeTab("meta")
@@ -90,6 +95,10 @@ adminLinksTabheadClicked = ->
     bigpanelmodule.applyUIState()
     return
 
+#endregion
+
+############################################################
+#region imageListElements
 imageElementClicked = (event) ->
     log "imageElementClicked"
     imageLabel = event.target.getAttribute("image-label")
@@ -102,6 +111,22 @@ imageElementBackClicked = (event) ->
     uiState.save()
     bigpanelmodule.applyUIState()
     return
+
+############################################################
+listElementClicked = (event) ->
+    log "imageElementClicked"
+    listId = event.target.getAttribute("list-id")
+    bigpanelmodule.activateEdit("lists", listId)
+    return
+
+listElementBackClicked = (event) ->
+    log "imageElementBackClicked"
+    uiState.activeListEdit ""
+    uiState.save()
+    bigpanelmodule.applyUIState()
+    return
+
+#endregion
 
 #endregion
 
@@ -147,15 +172,14 @@ setImagesTabcontent = ->
 setListsTabcontent = ->
     log "setListsTabcontent"
 
-    # listsListElementContainer.innerHTML = ""
-    # listsEditElementContainer.innerHTML = ""
+    listsListElementContainer.innerHTML = ""
+    listsEditElementContainer.innerHTML = ""
 
-    # for label in availableLists
-    #     listElement = listManagement.getListElement label
-    #     listsListElementContainer.appendChild listElement
-    #     editElement = listManagement.getEditElement label
-    #     listsEditElementContainer.appendChild editElement
-
+    for label in availableLists
+        listElement = listManagement.getListElement label
+        listsListElementContainer.appendChild listElement
+        editElement = listManagement.getEditElement label
+        listsEditElementContainer.appendChild editElement
     return
 
 setLinksTabcontent = ->
@@ -190,6 +214,14 @@ connectImageElements = (label, listElement, editElement) ->
     listElement.addEventListener("click", imageElementClicked)
     backButton = editElement.querySelector(".admin-bigpanel-arrow-left")
     backButton.addEventListener("click", imageElementBackClicked)
+    return
+
+connectListElements = (listId, listElement, editElement) ->
+    log "connectImageElements"
+    availableLists.push listId
+    listElement.addEventListener("click", listElementClicked)
+    backButton = editElement.querySelector(".admin-bigpanel-arrow-left")
+    backButton.addEventListener("click", listElementBackClicked)
     return
 
 #endregion
@@ -252,6 +284,22 @@ bigpanelmodule.applyUIState = ->
         adminLinksTabcontent.classList.remove("active")
         adminLinksTabhead.classList.remove("active")
 
+        activeEdit = uiState.activeListEdit()
+ 
+        if activeEdit then editElement = listManagement.getEditElement(activeEdit)
+        else editElement = null
+ 
+        listContainer = adminListsTabcontent.querySelector(".list-element-container")
+        editContainer = adminListsTabcontent.querySelector(".edit-element-container")
+ 
+        for element in editContainer.children
+            element.classList.remove("active")
+        listContainer.classList.remove("hidden")
+ 
+        if  editElement
+            listContainer.classList.add("hidden")
+            editElement.classList.add("active")
+
     if activeTab == "links"
         adminMetaTabhead.classList.remove("active")
         adminMetaTabcontent.classList.remove("active")
@@ -266,14 +314,23 @@ bigpanelmodule.applyUIState = ->
     return
 
 bigpanelmodule.setImageElements = (newImages) ->
+    ## Maybe not used at all?
     log "bigpanelmodule.setImageElements"
     olog newImages
     imageManagement.setImages(newImages)
     bigpanelmodule.applyUIState()
     return
 
+bigpanelmodule.prepareListElements = (content) ->
+    ## Maybe not used at all?^^
+    log "bigpanelmodule.prepareListElements"
+    listManagement.prepareListElements(content)
+    bigpanelmodule.applyUIState()
+    return
+
 bigpanelmodule.prepare = ->
     log "bigpanelmodule.prepare"
+    
     images = imageManagement.getImages()
     availableImages = []
     for label,image of images
@@ -281,6 +338,16 @@ bigpanelmodule.prepare = ->
             listElement = imageManagement.getListElement(label)
             editElement = imageManagement.getEditElement(label)
             connectImageElements(label, listElement, editElement)
+    
+    listManagement.prepareListElements(contentHandler.content())
+    lists = listManagement.getLists()
+    availableLists = []
+    for id,list of lists
+        if listManagement.elementExists(id)
+            listElement = listManagement.getListElement(id)
+            editElement = listManagement.getEditElement(id)
+            connectListElements(id, listElement, editElement)
+    
     setAllElementsToDOM()
     return
 

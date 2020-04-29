@@ -10,18 +10,23 @@ print = (arg) -> console.log(arg)
 #endregion
 
 ############################################################
+#region modulesFromEnvironment
 decamelize = require "decamelize"
+
+############################################################
 network = null
 appState = null
 bottomPanel = null
 admin = null
+
+#endregion
 
 ############################################################
 images = null
 imageInformationMap = {}
 
 ############################################################
-imagemanagementmodule.initialize = () ->
+imagemanagementmodule.initialize = ->
     log "imagemanagementmodule.initialize"
     appState = adminModules.appstatemodule
     network = adminModules.networkmodule
@@ -193,7 +198,7 @@ getArrowRightHTML = ->
 ############################################################
 #region exposedFunctions
 imagemanagementmodule.setImages = (newImages) ->
-    log "imagemanagementmodule.setImageElements"
+    log "imagemanagementmodule.setImages"
     olog newImages
     images = newImages
     digestImages()

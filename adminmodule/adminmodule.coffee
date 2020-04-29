@@ -278,7 +278,34 @@ newContentText = (contentKeyString, content) ->
     catch err then revertEdit(contentKeyString, oldContent)
     return
 
+newContentList = (contentKeyString, content) ->
+    log "newContentList"
+    log contentKeyString
+    log content
+    token = appState.token()
+    langTag = pwaContent.languageTag
+    path = window.location.pathname
+    documentName = path.split("/").pop()
+    updateObject = {langTag, documentName, contentKeyString, content, token}
+    oldContent = currentContentFallback
+    try
+        response = await network.scicall("update", updateObject)
+        edits = {}
+        edits[contentKeyString] = content
+        contentHandler.reflectEdits(edits)
+        updateSuccess(response)
+    catch err then revertListEdit(contentKeyString, oldContent)
+    adminmodule.start()
+    return
+
+
 ############################################################
+revertListEdit = (contentKeyString, oldList) ->
+    log "revertListEdit"
+    log "actually nothing to do here^^..."
+    bottomPanel.setErrorMessage("Veränderung konnte nicht angenommen werden!")
+    return
+
 revertEdit = (contentKeyString, oldText) ->
     log "revertEdit"
     bottomPanel.setErrorMessage("Veränderung konnte nicht angenommen werden!")
@@ -357,6 +384,13 @@ adminmodule.start = ->
 adminmodule.noticeVisibilityChanged = ->
     log "adminmodule.noticeVisibilityChanged"
     applyEditableVisibility()
+    return
+
+adminmodule.noticeListEdit = (contentKeyString, newContent, fallback) ->
+    log "adminmodule.noticeListEdit"
+    currentContentFallback = fallback
+    log "fallback: " + fallback
+    newContentList(contentKeyString, newContent)
     return
 
 adminmodule.noticeElementEdit = (element, fallback) ->

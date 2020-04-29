@@ -2,7 +2,10 @@
 
 list-arrow-size = 25px
 upload-button-size = 30px
-
+up-button-size = 30px
+down-button-size = 30px
+delete-button-size = 20px
+add-button-size = 40px
 //##########################################################
 #admin-bigpanel
     position fixed
@@ -131,3 +134,61 @@ upload-button-size = 30px
         border-bottom solid 1px white
         [text-content-key]
             padding 10px
+
+    .admin-bigpanel-list-item
+        display: flex
+        align-items: center
+        justify-content: space-between
+        background-color white
+        color #012
+        padding 5px 20px
+        margin-bottom: 15px
+    
+    .admin-bigpanel-up-button
+        margin-left auto
+        cursor pointer
+        height: up-button-size
+        width: up-button-size
+        svg
+            height: up-button-size
+            width: up-button-size
+    .admin-bigpanel-up-button > * 
+        pointer-events none
+
+    .admin-bigpanel-down-button
+        margin-left auto
+        cursor pointer
+        height: down-button-size
+        width: down-button-size
+        svg
+            height: down-button-size
+            width: down-button-size
+    .admin-bigpanel-down-button > * 
+        pointer-events none
+
+    .admin-bigpanel-delete-button
+        margin 5px
+        cursor pointer
+        height: delete-button-size
+        width: delete-button-size
+        svg
+            height: delete-button-size
+            width: delete-button-size
+    .admin-bigpanel-delete-button > * 
+        pointer-events none
+
+    .admin-bigpanel-add-button
+        background-color white
+        color #012
+        border-radius: 50%
+        margin auto
+        cursor pointer
+        height: add-button-size
+        width: add-button-size
+        svg
+            height: add-button-size
+            width: add-button-size
+    .admin-bigpanel-add-button > * 
+        pointer-events none
+    .admin-bigpanel-list-item-preview
+        flex-grow: 1

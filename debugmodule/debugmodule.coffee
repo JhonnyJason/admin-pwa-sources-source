@@ -17,8 +17,8 @@ debugmodule.modulesToDebug =
     # contenthandlermodule: true
     # floatingpanelmodule: true
     # imagemanagementmodule: true
-    linkmanagementmodule: true
-    # listmanagementmodule: true
+    # linkmanagementmodule: true
+    listmanagementmodule: true
     # mustachekeysmodule: true
     # networkmodule: true
     # tabspanelmodule: true
