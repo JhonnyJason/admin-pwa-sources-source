@@ -54,6 +54,9 @@ reflectEdit = (key, content) ->
     log "reflectEdit"
     tokens = key.split(".")
     log tokens
+    console.log "- - - reflect Edit of: " + key
+    console.log ostr content
+
     contentObject = currentContent
     index = 0
     while index < (tokens.length - 1)
@@ -76,9 +79,15 @@ contenthandlermodule.prepareOriginal = (remoteHash) ->
 contenthandlermodule.reflectEdits = (edits) ->
     log "contenthandlermodule.reflectEdits"
     currentContent = JSON.parse(JSON.stringify(currentOriginal))
-    reflectEdit(key,content) for key,content of edits
+    # reflectEdit(key,content) for key,content of edits
+    
+    ## apply first the structural updats then the simple text updates.
+    reflectEdit(key,content) for key,content of edits when Array.isArray(content)
+    reflectEdit(key,content) for key,content of edits when !Array.isArray(content)
     return
 
 contenthandlermodule.content = -> currentContent
+
+contenthandlermodule.reflectEdit = (key, content) -> reflectEdit(key, content)
 
 module.exports = contenthandlermodule

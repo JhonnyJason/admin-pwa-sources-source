@@ -271,9 +271,8 @@ newContentText = (contentKeyString, content) ->
     oldContent = currentContentFallback
     try
         response = await network.scicall("update", updateObject)
-        edits = {}
-        edits[contentKeyString] = content
-        contentHandler.reflectEdits(edits)
+        applyEdit(contentKeyString, content)
+        contentHandler.reflectEdit(contentKeyString, content)
         updateSuccess(response)
     catch err then revertEdit(contentKeyString, oldContent)
     return
@@ -290,14 +289,12 @@ newContentList = (contentKeyString, content) ->
     oldContent = currentContentFallback
     try
         response = await network.scicall("update", updateObject)
-        edits = {}
-        edits[contentKeyString] = content
-        contentHandler.reflectEdits(edits)
+        listManagement.setNewList(content, contentKeyString)
+        contentHandler.reflectEdit(contentKeyString, content)
         updateSuccess(response)
     catch err then revertListEdit(contentKeyString, oldContent)
     adminmodule.start()
     return
-
 
 ############################################################
 revertListEdit = (contentKeyString, oldList) ->
@@ -306,12 +303,21 @@ revertListEdit = (contentKeyString, oldList) ->
     bottomPanel.setErrorMessage("Veränderung konnte nicht angenommen werden!")
     return
 
-revertEdit = (contentKeyString, oldText) ->
+applyEdit = (contentKeyString, newContent) ->
+    log "applyEdit"
+    selector = "[text-content-key='"+contentKeyString+"']"
+    elements = document.querySelectorAll(selector)
+    for element in elements
+        element.innerHTML = newContent
+    return
+
+revertEdit = (contentKeyString, oldContent) ->
     log "revertEdit"
     bottomPanel.setErrorMessage("Veränderung konnte nicht angenommen werden!")
     selector = "[text-content-key='"+contentKeyString+"']"
-    element = document.querySelector(selector)
-    element.innerHTML = oldText
+    elements = document.querySelectorAll(selector)
+    for element in elements
+        element.innerHTML = oldContent
     return
 
 setCleanState = ->

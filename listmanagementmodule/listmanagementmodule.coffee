@@ -72,6 +72,7 @@ upButtonClicked = (event) ->
         bottomPanel.setErrorMessage("Das erste Element kann nicht nach oben verschoben werden!")
         return
     log listId
+    olog list
     newList = JSON.parse(JSON.stringify(list))
     
     thisElement = newList[index]
@@ -153,18 +154,45 @@ getEditHeadHTML = (name) ->
     return html
 
 getListItemHTML = (item, index, listId) ->
+    listItemKey = listId+"."+index
     html = "<div class='admin-bigpanel-list-item'>"
-    html += getItemPreviewHTML(item)
+    html += getItemPreviewHTML(item, listItemKey)
     html += getItemControlHTML(index, listId)
     html += "</div>"
     return html
 
 
 ############################################################
-getItemPreviewHTML = (item) ->
-    html = "<div class='admin-bigpanel-list-item-preview'>"
-    if typeof item == "string" then html += item
-    html += "</div>"
+getItemPreviewHTML = (item, key) ->
+    html = ""
+    if typeof item == "string"
+        html += "<div class='admin-bigpanel-list-item-preview' "
+        html += "text-content-key='"+key+"' contentEditable='true'>"
+        html += item
+        html += "</div>"
+    else
+        olog key
+        olog item
+        html += "<div class='admin-bigpanel-list-item-preview' >"
+        url = item["thumbnailURL"]
+        urlKey = key+".thumbnailURL"
+        if !url
+            url = item["url"]
+            urlKey = key+".url"
+        if url
+            html += "<img src='"+url+"' >"
+            html += "<div text-content-key='"+urlKey+"' contentEditable='true'>"
+            html += url
+            html += "</div>"
+        else
+            for label,itemContent of item
+                if typeof itemContent == "string"
+                    contentKey = key+"."+label
+                    html += "<div text-content-key='"+contentKey+"' contentEditable='true'>"
+                    html += itemContent
+                    html += "</div>"
+                    break
+        html += "</div>"
     return html
 
 getItemControlHTML = (index, listId)->
@@ -248,6 +276,11 @@ digestToLists = (prefix, content) ->
 
 ############################################################
 #region exposedFunctions
+listmanagementmodule.setNewList = (list, listId) ->
+    log "listmanagementmodule.setNewList"
+    allLists[listId] = list
+    return
+
 listmanagementmodule.prepareListElements = (content) ->
     log "listmanagementmodule.prepareListElements"
     allLists = {}
