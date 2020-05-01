@@ -13,6 +13,7 @@ print = (arg) -> console.log(arg)
 admin = null
 bigpanel = null
 bottomPanel = null
+contentHandler = null
 
 ############################################################
 allLists = null
@@ -24,7 +25,180 @@ listmanagementmodule.initialize = ->
     admin = adminModules.adminmodule
     bigpanel = adminModules.bigpanelmodule
     bottomPanel = adminModules.bottompanelmodule
+    contentHandler = adminModules.contenthandlermodule
     return
+
+############################################################
+findURLsOfListItem = (listItem) ->
+    log "findURLsOfListItem"
+    urls = []
+    for label,element of listItem
+        if label == "url" then urls.push(element)
+        if typeof element == "object" then urls.push(findURLsOfListItem(element))
+    return urls.flat()
+
+findImageObject = (name) ->
+    log "findImageObject"
+    content = contentHandler.content()
+    for label,image of content.images
+        if image.name == name then return { label, image }
+    return
+
+findAssetObject = (url) ->
+    log "findAssetObject"
+    tokens = url.split("/")
+    if tokens.length < 2 then return null
+    if tokens[0] == "img" then return findImageObject(tokens[1])
+    if tokens.length < 3 then return null
+    if tokens[1] == "img" then return findImageObject(tokens[2])
+    return
+
+findAssetObjects = (urlList) ->
+    log "findAssetObjects"
+    assetObjects = []
+    for url in urlList
+        assetObjects.push(findAssetObject(url))
+    return assetObjects
+
+############################################################
+adjustAssetIndicesTo = (assetObjects, index) ->
+    log "adjustAssetIndicesTo"
+    newKey = ""+(index+1)
+    assetObjects = JSON.parse(JSON.stringify(assetObjects))
+    for assetObject in assetObjects
+        assetObject.label = assetObject.label.replace("1", newKey)
+        if assetObject.image
+            assetObject.image.name = assetObject.image.name.replace("1", newKey)
+            if assetObject.image.thumbnail
+                assetObject.image.thumbnail.name = assetObject.image.thumbnail.name.replace("1", newKey)
+    return assetObjects
+
+adjustURLIndicesTo = (item, index) ->
+    log "adjustURLIndicesTo"
+    newKey = ""+(index+1)
+    for label,element of item
+        if label == "url" then item[label] = element.replace("1", newKey)
+        if typeof element == "object" then adjustURLIndicesTo(element, index)
+    return
+
+adjustURLIndicesFromTo = (item, fromIndex, toIndex) ->
+    log "adjustURLIndicesFromTo"
+    oldKey = ""+(fromIndex+1)
+    newKey = ""+(toIndex+1)
+    for label,element of item
+        if label == "url" then item[label] = element.replace(oldKey, newKey)
+        if typeof element == "object" then adjustURLIndicesFromTo(element, fromIndex, toIndex)
+    return
+
+adjustURLIndicesOneDown = (list, index) ->
+    log "adjustURLIndicesOneDown"
+    while index < list.length
+        adjustURLIndicesFromTo(list[index], index+1, index)
+        index++
+    return
+
+############################################################
+createNewListItem = (templateEntry, index) ->
+    log "createNewListItem"
+    item = JSON.parse(JSON.stringify(templateEntry))
+    urlList = findURLsOfListItem(item)
+    assetObjects = findAssetObjects(urlList)
+    # olog assetObjects
+    adjustURLIndicesTo(item, index)
+    adjustedObjects = adjustAssetIndicesTo(assetObjects, index)
+    # olog assetObjects
+    if adjustedObjects
+        content = contentHandler.content()
+        oldImages = JSON.parse(JSON.stringify(content.images))
+        for label,element of adjustedObjects
+            if element.image
+                content.images[element.label] = element.image
+        admin.noticeImagesEdits(oldImages)
+    # olog assetEdits
+    # olog item
+    return item
+
+removeAssociatedAssets = (firstItem, index, lastIndex) ->
+    log "removeAssociatedAssets"
+    urlList = findURLsOfListItem(firstItem)
+    assetObjects = findAssetObjects(urlList)
+    if assetObjects
+        adjustedObjects = adjustAssetIndicesTo(assetObjects, lastIndex)
+        content = contentHandler.content()
+        oldImages = JSON.parse(JSON.stringify(content.images))
+        for label,element of adjustedObjects
+            if element.image
+                delete content.images[element.label]
+        
+        imageMoves = createDeleteMoves(assetObjects, index, lastIndex)
+        admin.noticeImageSwaps(imageMoves)
+        admin.noticeImagesEdits(oldImages)
+    return
+
+createDeleteMoves = (assetObjects, index, lastIndex) ->
+    log "createDeleteMoves"
+    moves = []
+    walker = index
+    while walker < lastIndex
+        walker = walker + 1
+        fromObjects = adjustAssetIndicesTo(assetObjects, walker)
+        olog fromObjects
+        toObjects = adjustAssetIndicesTo(assetObjects, walker-1)
+        olog toObjects
+        for label of fromObjects
+            if fromObjects[label].image
+                fromName = fromObjects[label].image.name
+                toName = toObjects[label].image.name
+                moves.push {fromName, toName}
+                if fromObjects[label].image.thumbnail
+                    fromName = fromObjects[label].image.thumbnail.name
+                    toName = toObjects[label].image.thumbnail.name
+                    moves.push {fromName, toName}
+    olog moves
+    return moves
+
+createSwapMoves = (firstItem, fromIndex, toIndex) ->
+    log "createSwapMoves"
+    moves = []
+    urlList = findURLsOfListItem(firstItem)
+    assetObjects = findAssetObjects(urlList)
+    fromObjects = adjustAssetIndicesTo(assetObjects, fromIndex)
+    olog fromObjects
+    toObjects = adjustAssetIndicesTo(assetObjects, toIndex)
+    olog toObjects
+
+    for label of fromObjects
+        if fromObjects[label].image
+            fromName = fromObjects[label].image.name
+            toName = "temp-"+fromObjects[label].image.name
+            moves.push {fromName, toName}
+            if fromObjects[label].image.thumbnail
+                fromName = fromObjects[label].image.thumbnail.name
+                toName = "temp-"+fromObjects[label].image.thumbnail.name
+                moves.push {fromName, toName}
+
+    for label of fromObjects
+        if fromObjects[label].image
+            fromName = toObjects[label].image.name
+            toName = fromObjects[label].image.name
+            moves.push {fromName, toName}
+            if fromObjects[label].image.thumbnail
+                fromName = toObjects[label].image.thumbnail.name
+                toName = fromObjects[label].image.thumbnail.name
+                moves.push {fromName, toName}
+
+    for label of fromObjects
+        if fromObjects[label].image
+            fromName = "temp-"+fromObjects[label].image.name
+            toName = toObjects[label].image.name
+            moves.push {fromName, toName}
+            if fromObjects[label].image.thumbnail
+                fromName = "temp-"+fromObjects[label].image.thumbnail.name
+                toName = toObjects[label].image.thumbnail.name
+                moves.push {fromName, toName}
+
+    olog moves
+    return moves
 
 ############################################################
 addButtonClicked = (event) ->
@@ -33,8 +207,9 @@ addButtonClicked = (event) ->
     log listId
     list = allLists[listId]
     newList = JSON.parse(JSON.stringify(list))
-    newList.push JSON.parse(JSON.stringify(list[0]))
-    olog newList
+    newItem = createNewListItem(list[0], list.length)
+    newList.push newItem
+    # olog newList
     admin.noticeListEdit(listId, newList, list)
     return
 
@@ -49,7 +224,8 @@ downButtonClicked = (event) ->
     if nextIndex >= list.length
         bottomPanel.setErrorMessage("Das letzte Element kann nicht nach unten verschoben werden!")
         return
-    log listId
+    # log listId
+    # olog list
     newList = JSON.parse(JSON.stringify(list))
     
     thisElement = newList[index]
@@ -57,6 +233,11 @@ downButtonClicked = (event) ->
     newList[nextIndex] = thisElement
     newList[index] = nextElement
 
+    adjustURLIndicesFromTo(newList[nextIndex], index, nextIndex)
+    adjustURLIndicesFromTo(newList[index], nextIndex, index)
+
+    imageMoves = createSwapMoves(list[0], index, nextIndex)
+    admin.noticeImageSwaps(imageMoves)
     admin.noticeListEdit(listId, newList, list)
     return 
 
@@ -71,8 +252,8 @@ upButtonClicked = (event) ->
     if prevIndex < 0
         bottomPanel.setErrorMessage("Das erste Element kann nicht nach oben verschoben werden!")
         return
-    log listId
-    olog list
+    # log listId
+    # olog list
     newList = JSON.parse(JSON.stringify(list))
     
     thisElement = newList[index]
@@ -80,6 +261,12 @@ upButtonClicked = (event) ->
     newList[prevIndex] = thisElement
     newList[index] = prevElement
     
+    adjustURLIndicesFromTo(newList[prevIndex], index, prevIndex)
+    adjustURLIndicesFromTo(newList[index], prevIndex, index)
+
+    imageMoves = createSwapMoves(list[0], index, prevIndex)
+    admin.noticeImageSwaps(imageMoves)
+
     admin.noticeListEdit(listId, newList, list)    
     return
 
@@ -90,11 +277,16 @@ deleteButtonClicked = (event) ->
     list = allLists[listId]
     log listId
     log index
-    if list.length == 1 
+    if list.length == 1
         bottomPanel.setErrorMessage("Das letzte Element kann nicht gelöscht werden!")
         return
     newList = JSON.parse(JSON.stringify(list))
     newList.splice(index, 1)
+    removeAssociatedAssets(list[0], index, newList.length)
+    # olog newList
+    # olog index
+    adjustURLIndicesOneDown(newList, index)
+    # olog newList
     admin.noticeListEdit(listId, newList, list)    
     return
 
@@ -171,8 +363,8 @@ getItemPreviewHTML = (item, key) ->
         html += item
         html += "</div>"
     else
-        olog key
-        olog item
+        # olog key
+        # olog item
         html += "<div class='admin-bigpanel-list-item-preview' >"
         url = item["thumbnailURL"]
         urlKey = key+".thumbnailURL"
@@ -181,9 +373,9 @@ getItemPreviewHTML = (item, key) ->
             urlKey = key+".url"
         if url
             html += "<img src='"+url+"' >"
-            html += "<div text-content-key='"+urlKey+"' contentEditable='true'>"
-            html += url
-            html += "</div>"
+            # html += "<div text-content-key='"+urlKey+"' contentEditable='true'>"
+            # html += url
+            # html += "</div>"
         else
             for label,itemContent of item
                 if typeof itemContent == "string"

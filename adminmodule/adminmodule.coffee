@@ -194,7 +194,7 @@ stoppedEditing = (event) ->
     # log "new Content: " + content
     return if content == currentContentFallback
     contentKeyString = element.getAttribute("text-content-key")
-    newContentText(contentKeyString, content)
+    newContentText(contentKeyString, content, currentContentFallback)
     return
 
 #endregion
@@ -259,7 +259,7 @@ applyEditableVisibility = ->
     return
 
 ############################################################
-newContentText = (contentKeyString, content) ->
+newContentText = (contentKeyString, content, fallback) ->
     log "newContentText"
     log contentKeyString
     log content
@@ -268,16 +268,15 @@ newContentText = (contentKeyString, content) ->
     path = window.location.pathname
     documentName = path.split("/").pop()
     updateObject = {langTag, documentName, contentKeyString, content, token}
-    oldContent = currentContentFallback
     try
         response = await network.scicall("update", updateObject)
         applyEdit(contentKeyString, content)
         contentHandler.reflectEdit(contentKeyString, content)
         updateSuccess(response)
-    catch err then revertEdit(contentKeyString, oldContent)
+    catch err then revertEdit(contentKeyString, fallback)
     return
 
-newContentList = (contentKeyString, content) ->
+newContentList = (contentKeyString, content, fallback) ->
     log "newContentList"
     log contentKeyString
     log content
@@ -286,17 +285,37 @@ newContentList = (contentKeyString, content) ->
     path = window.location.pathname
     documentName = path.split("/").pop()
     updateObject = {langTag, documentName, contentKeyString, content, token}
-    oldContent = currentContentFallback
     try
         response = await network.scicall("update", updateObject)
         listManagement.setNewList(content, contentKeyString)
         contentHandler.reflectEdit(contentKeyString, content)
         updateSuccess(response)
-    catch err then revertListEdit(contentKeyString, oldContent)
+    catch err then revertListEdit(contentKeyString, fallback)
     adminmodule.start()
     return
 
+newImages = (fallback) ->
+    log "newImages"
+    token = appState.token()
+    langTag = pwaContent.languageTag
+    path = window.location.pathname
+    documentName = path.split("/").pop()
+    content = contentHandler.content().images
+    contentKeyString = "images"
+    updateObject = {langTag, documentName, contentKeyString, content, token}
+    try
+        response = await network.scicall("update", updateObject)
+        updateSuccess(response)
+    catch err then revertImagesEdit(fallback)
+    return
+
 ############################################################
+revertImagesEdit = (oldImages) ->
+    log "revertImagesEdit"
+    contentHandler.content().images = oldImages
+    bottomPanel.setErrorMessage("Veränderung konnte nicht angenommen werden!")    
+    return
+
 revertListEdit = (contentKeyString, oldList) ->
     log "revertListEdit"
     log "actually nothing to do here^^..."
@@ -392,22 +411,44 @@ adminmodule.noticeVisibilityChanged = ->
     applyEditableVisibility()
     return
 
+adminmodule.noticeImageSwaps = (moves) ->
+    log "adminmodule.noticeImageSwaps"
+    token = appState.token()
+    assetType = "images"
+    dataObject = {assetType, moves, token}
+    try
+        await network.scicall("moveAssets", dataObject)
+        console.log("/moveAssets success!")
+    catch err 
+        log err
+        console.log("/moveAssets failure!")
+    return
+
+    return
+
+adminmodule.noticeImagesEdits = (fallback) ->
+    log "adminmodule.noticeImagesEdits"
+    newImages(fallback)
+    return
+
+adminmodule.noticeImagesEdits = (fallback) ->
+    log "adminmodule.noticeImagesEdits"
+    newImages(fallback)
+    return
+
 adminmodule.noticeListEdit = (contentKeyString, newContent, fallback) ->
     log "adminmodule.noticeListEdit"
-    currentContentFallback = fallback
-    log "fallback: " + fallback
-    newContentList(contentKeyString, newContent)
+    console.log ostr newContent
+    newContentList(contentKeyString, newContent, fallback)
     return
 
 adminmodule.noticeElementEdit = (element, fallback) ->
     log "adminmodule.noticeElementEdit"
     content = cleanContentHTML(element.innerHTML)
-    log ""+element
+    # log ""+element
     element.innerHTML = content
     contentKeyString = element.getAttribute("text-content-key")
-    currentContentFallback = fallback
-    log "fallback: " + fallback
-    newContentText(contentKeyString, content)
+    newContentText(contentKeyString, content, fallback)
     return
 
 adminmodule.noticeContentChange = -> setDirtyState()
