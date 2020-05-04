@@ -1,3 +1,122 @@
 // imagemanagement styles
-#imagemanagement
-    background-color rgba(0, 0, 0, 0.2)
+upload-button-size = 30px
+quit-button-size = 30px
+
+//##########################################################
+.admin-bigpanel-file-selection-section
+    margin-bottom 20px
+
+.admin-bigpanel-image-dimension-section
+    margin-bottom 3px
+    width 100%
+
+.admin-bigpanel-image-dimension
+    display inline-block
+    margin-right 20px
+
+.admin-bigpanel-view-all-section
+    display inline-block
+
+.admin-bigpanel-image-preview-section
+    display flex
+    flex-direction: column
+    width 100%
+    align-items: center
+    overflow hidden
+    img
+        margin-bottom: 5px
+        object-fit: cover
+        object-position: 50% 50%
+
+.admin-bigpanel-thumbnail-preview-section
+    display flex
+    flex-direction: column
+    width 100%
+    align-items: center
+    overflow hidden
+    img
+        margin-bottom: 5px
+        object-fit: cover
+        object-position: 50% 50%
+
+.admin-bigpanel-image-footer-section
+    display flex
+    width 100%
+    justify-content: space-between
+    margin-bottom 20px
+
+.admin-bigpanel-image-size-indicator
+    border-radius 7px
+    padding 5px
+
+.admin-bigpanel-image-size-indicator.lightweight
+    background-color alpha(green, 0.7)
+
+.admin-bigpanel-image-size-indicator.overweight
+    background-color alpha(orange, 0.7)
+
+.admin-bigpanel-image-size-indicator.heavyweight
+    background-color alpha(red, 0.7)
+
+.admin-bigpanel-crop-button
+    background-color white
+    color #012
+    margin-left auto
+    margin-right 20px
+    padding 5px
+    cursor pointer
+
+.admin-bigpanel-crop-section
+    display none
+    flex-direction: column
+    width 100%
+    align-items: center
+    overflow hidden
+
+.admin-bigpanel-crop-footer
+    display flex
+    flex-wrap: wrap
+    label
+        vertical-align: top
+    input 
+        padding 0
+        width: 200px
+        margin 0 10px
+
+.admin-bigpanel-upload-button
+    // border solid 2px white
+    cursor pointer
+    height: upload-button-size
+    width: upload-button-size
+    svg
+        height: upload-button-size
+        width: upload-button-size
+
+.admin-bigpanel-upload-button > * 
+    pointer-events: none
+
+.admin-bigpanel-quit-button
+    // border solid 2px white
+    cursor pointer
+    height: quit-button-size
+    width: quit-button-size
+    svg
+        height: quit-button-size
+        width: quit-button-size
+
+.admin-bigpanel-upload-button > * 
+    pointer-events: none
+
+
+
+.cropping
+    .admin-bigpanel-crop-section
+        display flex
+    .admin-bigpanel-edit-head
+        display: none
+    .admin-bigpanel-file-selection-section
+        display none
+    .admin-bigpanel-image-preview-section
+        display none
+    .admin-bigpanel-thumbnail-preview-section
+        display none

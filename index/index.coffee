@@ -11,8 +11,8 @@ window.onload = ->
         console.log("only initialize the website!")
         otherDocumentLoad()
         return
-
     domconnect.initialize()
+    Modules.imagemanagementmodule.initialize()
     promises = (m.initialize() for n,m of Modules)
     await Promise.all(promises)
     global.adminInitialized = true

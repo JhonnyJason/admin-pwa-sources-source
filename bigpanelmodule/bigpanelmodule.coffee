@@ -355,8 +355,10 @@ bigpanelmodule.activateEdit = (type, label) ->
     log "bigpanelmodule.activateEdit"
 
     if type ==  "images"
+        imageManagement.killCroppie()
         uiState.activeTab "images"
         uiState.activeImageEdit label
+        
     if type == "lists"
         uiState.activeTab "lists"
         uiState.activeListEdit label

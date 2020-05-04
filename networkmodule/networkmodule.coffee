@@ -81,6 +81,18 @@ networkmodule.scicall = (route, data) ->
     url = sServerURL + "/" + route
     return postData(url, data)
 
+############################################################
+networkmodule.getRessourceSize = (url) ->
+    options = 
+        method: "HEAD"
+        credentials: "omit"
+    response = await fetch(url, options)
+    if response.status == 403 then throw new Error("Unauthorized!")
+    if response.status != 200 then throw new Error("Unexpected Response Status!")
+    return response.headers.get('Content-Length')
+
+
+############################################################
 networkmodule.requestBackendService = (route, data, successCallback, failCallback) ->
     requestService sServerURL + "/" + route, data, successCallback, failCallback
     return
