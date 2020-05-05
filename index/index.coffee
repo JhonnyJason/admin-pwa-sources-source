@@ -13,6 +13,7 @@ window.onload = ->
         return
     domconnect.initialize()
     Modules.imagemanagementmodule.initialize()
+    Modules.listmanagementmodule.initialize()
     promises = (m.initialize() for n,m of Modules)
     await Promise.all(promises)
     global.adminInitialized = true

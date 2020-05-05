@@ -44,6 +44,14 @@ findImageObject = (name) ->
         if image.name == name then return { label, image }
     return
 
+findAssociatedImageKey = (url) ->
+    log "findAssociatedImageKey"
+    imageObject = findAssetObject(url)
+    if !imageObject or !imageObject.label 
+        console.log(url + " did not have an image object")
+        return ""
+    return imageObject.label
+
 findAssetObject = (url) ->
     log "findAssetObject"
     tokens = url.split("/")
@@ -372,7 +380,9 @@ getItemPreviewHTML = (item, key) ->
             url = item["url"]
             urlKey = key+".url"
         if url
-            html += "<img src='"+url+"' >"
+            imageKey = findAssociatedImageKey(url)
+            html += "<img src='"+url+"' "
+            html += "image-content-key='"+imageKey+"' >"
             # html += "<div text-content-key='"+urlKey+"' contentEditable='true'>"
             # html += url
             # html += "</div>"
