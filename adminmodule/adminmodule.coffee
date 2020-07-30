@@ -224,14 +224,14 @@ cleanContentHTML = (innerHTML, isLink) ->
     el.innerHTML = innerHTML
     children = [el.children...]
     for child in children
-        if child.tagName == "B" then newNode = getCleanBold(child)
+        if child.tagName == "B" && !isLink then newNode = getCleanBold(child)
         else if child.tagName == "A" && !isLink then newNode = getCleanAnchor(child)
-        else if child.tagName == "BR" then newNode = document.createElement("br")
+        else if child.tagName == "BR" && !isLink then newNode = document.createElement("br")
         else newNode = cleanContentHTML(child.innerHTML)
         # log child.innerHTML
         # log child.tagName
         if typeof newNode == "string"
-            if newNode != "<br>" then newNode = "<br>"+newNode
+            if newNode != "<br>" && !isLink then newNode = "<br>"+newNode
             child.insertAdjacentHTML("beforebegin", newNode)
             el.removeChild(child)
         else
