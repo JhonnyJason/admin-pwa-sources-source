@@ -188,8 +188,10 @@ stoppedEditing = (event) ->
     log "stoppedEditing"
     floatingPanel.disappear()
     element = event.target
+    isLink = element.getAttribute("is-link")
     element.classList.remove("editing")
-    content = cleanContentHTML(element.innerHTML)
+    content = cleanContentHTML(element.innerHTML, isLink)
+    log "new content: " + content
     element.innerHTML = content
     # log "new Content: " + content
     return if content == currentContentFallback
@@ -215,7 +217,7 @@ getCleanAnchor = (el) ->
     # if href then el.setAttribute("href", href)
     return el
 
-cleanContentHTML = (innerHTML) ->
+cleanContentHTML = (innerHTML, isLink) ->
     # log "cleanContentHTML"
     # log innerHTML
     el = document.createElement("div")
@@ -223,7 +225,7 @@ cleanContentHTML = (innerHTML) ->
     children = [el.children...]
     for child in children
         if child.tagName == "B" then newNode = getCleanBold(child)
-        else if child.tagName == "A" then newNode = getCleanAnchor(child)
+        else if child.tagName == "A" && !isLink then newNode = getCleanAnchor(child)
         else if child.tagName == "BR" then newNode = document.createElement("br")
         else newNode = cleanContentHTML(child.innerHTML)
         # log child.innerHTML

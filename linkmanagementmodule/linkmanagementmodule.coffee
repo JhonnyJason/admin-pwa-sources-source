@@ -27,7 +27,7 @@ createEditHTML = (label, content) ->
     html += "<div class='meta-edit-label'>"
     html += label
     html += ":</div>"
-    html += "<div text-content-key='"+label+".ref' contentEditable>"
+    html += "<div text-content-key='"+label+".ref' contentEditable is-link='true'>"
     html += content
     html += "</div>"
     html += "</div>"
