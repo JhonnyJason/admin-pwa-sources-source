@@ -1,7 +1,7 @@
-faqdomconnect = {name: "faqdomconnect"}
+impressumdomconnect = {name: "impressumdomconnect"}
 
 ############################################################
-faqdomconnect.initialize = () ->
+impressumdomconnect.initialize = () ->
     global.adminPanel = document.getElementById("admin-panel")
     global.adminPanelVisibilityButton = document.getElementById("admin-panel-visibility-button")
     global.adminSecretInput = document.getElementById("admin-secret-input")
@@ -19,4 +19,4 @@ faqdomconnect.initialize = () ->
     global.adminFloatingpanel = document.getElementById("admin-floatingpanel")
     return
     
-module.exports = faqdomconnect
+module.exports = impressumdomconnect
